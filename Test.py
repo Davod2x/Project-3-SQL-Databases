@@ -46,7 +46,7 @@ def createBookTable(mydb):
 	CREATE TABLE Book
 	(
 	bookID int primary key not null auto_increment,
-	title VARCHAR(30),
+	title VARCHAR(30) ,
 	author VARCHAR(20)
 	);	
 	"""
