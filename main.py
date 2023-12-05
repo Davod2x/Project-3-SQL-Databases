@@ -1,5 +1,7 @@
 from mysql.connector import connect, Error
 import csv
+import numpy as np
+
 def createSchedule(mydb):
     mycursor = mydb.cursor();
     query = """
@@ -58,10 +60,8 @@ def createEnrollment(mydb):
     DROP TABLE if exists ENROLLMENT;
     CREATE TABLE ENROLLMENT
     (
-    CREATE TABLE ENROLLEMENT
-    (
-    studentID INT PRIMARY KEY NOT NULL,
-    studentNumber INT NOT NULL AUTO_INCREMENT,
+    studentID INT,
+    courseID INT PRIMARY KEY NOT NULL,
     status  ENUM('Active', 'Waitlist', 'Complete'),
     classSize INT (100)
     );	
@@ -136,6 +136,42 @@ def profLookup(mydb,profName):
     except Error as e:
         print(e)
 
+def generateStudents(mydb):
+    mycursor = mydb.cursor();
+    query = """
+    Insert into Student
+        (studentID ,studentNumber ,fname ,lname ,classYear,Major1,Major2 ,Minor1 ,Advisor)
+        values
+        ('1242','1',"David","Lukula","Jr","CS","","DS","Hughes"),
+        ("1252","2","Chris","Baker","Jr","CS","","DS","Hughes"),
+        ("1262","3","Cael","Schmitt","Sr","CS","","DS","Hughes"),
+        ('1272','4',"Stephen","Hooghs","Fr","CS","PSY","ANT","Hughes"),
+        ('1282','5',"John","Doe","So","CS","PHY","DS","Hughes");
+        
+        
+    Insert into Enrollment
+	(studentID,courseID,status,classSize)
+	values
+    ('1242',"1","Active",100),
+    ('1242',"2","Active",100),
+    ('1242',"3","Active",100),
+    ('1242',"4","Active",100),
+    ("1252","5","Active",100),
+    ("1252","2","Active",100),
+    ("1252","3","Active",100),
+    ("1252","6","Active",100),
+    ("1262","1","Active",100),
+    ("1262","3","Active",100),
+	("1262","5","Active",100),
+    ("1262","7","Active",100),
+	("1272","8","Active",100),
+	("1272","2","Active",100),
+	("1272","6","Active",100),
+	("1272","3","Active",100);
+    
+    
+    """
+
 def main():
     titles = []
     instructor = []
@@ -174,8 +210,8 @@ def main():
             password="Coding12@",  # Replace with yours
             database="Project3"
         )
-
-        createStudent(mydb)
+        #createEnrollment(mydb)
+        #createStudent(mydb)
         #profLookup(mydb,"S Harmsen")
         #courseTime(mydb,"10:00 AM")
         #courseDept(mydb,"AAM")
