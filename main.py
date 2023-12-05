@@ -61,9 +61,10 @@ def createEnrollment(mydb):
     CREATE TABLE ENROLLMENT
     (
     studentID INT,
-    courseID INT PRIMARY KEY NOT NULL,
+    courseID INT,
     status  ENUM('Active', 'Waitlist', 'Complete'),
-    classSize INT (100)
+    classSize INT (100),
+    primary key (studentID,courseID)
     );	
     """
     print(query)
