@@ -2,6 +2,7 @@ from mysql.connector import connect, Error
 import csv
 import numpy as np
 import random
+import copy
 
 def createSchedule(mydb):
     mycursor = mydb.cursor();
@@ -261,6 +262,8 @@ def enrollStudent(mydb,sID,cID):
     mycursor = mydb.cursor();
     status = "Active"
     cSize = "100"
+    if cSize == "0":
+        status = "Waitlist"
     query = """
     Insert into Enrollment
 	    (studentID,courseID,status,classSize)
@@ -308,16 +311,18 @@ def anonymize(mydb):
                 minor.append(line[6])
                 advisor.append(line[7])
 
-
+        fnamec = copy.deepcopy(fname)
+        lnamec = copy.deepcopy(lname)
         #print(idnums,lname,fname)
         #generatename = random.randint(0, len(idnums) - 1)
         for i in range (len(idnums)):
+
             t = random.randint(10000000,19999999)
-            tt = lname[random.randint(0, len(idnums) - 1)]
-            ttt = fname[random.randint(0, len(idnums) - 1)]
+            tt = lnamec.pop(random.randint(0, len(fnamec) - 1))
+            ttt = fnamec.pop(random.randint(0, len(fnamec) - 1))
             if idnums[i] not in aliases:
                 aliases[idnums[i],lname[i],fname[i]] = t, tt, ttt
-               # insertNewStudent(mydb, t, ttt, tt, Class[i], major1[i], major2[i], minor[i], advisor[i])
+                insertNewStudent(mydb, t, ttt, tt, Class[i], major1[i], major2[i], minor[i], advisor[i])
 
     return aliases
 
@@ -387,18 +392,49 @@ def instructorClasses(mydb,instructor): #This lets you find all the classes a in
     except Error as e:
         print(e)
 
-
-
-
-#This function shows you the ID, first and last name of every student who is taking the class
-def takingClass(mydb,title):
+def studentSchedule(mydb,studentID): #This lets you find all the classes a student is taking by their ID number
     mycursor = mydb.cursor();
     query = """
-       select studentID
-from enrollment
-where courseID = 7
+    select s.studentID, s.fname, s.lname, e.courseID
+    from enrollment as e join student as s using (studentID)
+    where studentID =
+    """
+    query += "\"" + studentID + "\""
+    #print(query)
+    try:
+        mycursor.execute(query);
+        for result in mycursor.fetchall():
+            print(result)
+    except Error as e:
+        print(e)
+
+
+
+def takingClass(mydb,courseID): #This function shows you the ID, first and last name of every student who is taking the class
+    mycursor = mydb.cursor();
+    query = """
+    select c.title,s.studentID,s.fname,s.lname
+    from schedule as c join student as s 
+    where c.courseID =
        """
+    query += "\"" + courseID + "\""
     print(query)
+    try:
+        mycursor.execute(query);
+        for result in mycursor.fetchall():
+            print(result)
+    except Error as e:
+        print(e)
+
+def whatMajor(mydb,major): #This function shows you all the classes that people with certain majors are taking
+    mycursor = mydb.cursor();
+    query = """
+    SELECT e.courseID,s.fname,s.lname
+    FROM  student as s join enrollment as e using (studentID)
+    where s.Major1 =
+       """
+    query += "\"" + major + "\""
+    #print(query)
     try:
         mycursor.execute(query);
         for result in mycursor.fetchall():
@@ -447,6 +483,9 @@ def main():
             password="Coding12@",  # Replace with yours
             database="Project3"
         )
+        whatMajor(mydb,"CS")
+        #takingClass(mydb,"1")
+        #studentSchedule(mydb,"1242")
         #instructorClasses(mydb,"S Hughes")
         #studentLookup(mydb,"1242")
         #listStudent(mydb)
