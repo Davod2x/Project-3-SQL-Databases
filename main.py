@@ -483,7 +483,7 @@ def main():
             password="Coding12@",  # Replace with yours
             database="Project3"
         )
-        whatMajor(mydb,"CS")
+        #whatMajor(mydb,"CS")
         #takingClass(mydb,"1")
         #studentSchedule(mydb,"1242")
         #instructorClasses(mydb,"S Hughes")
